@@ -1,0 +1,54 @@
+{%- liquid
+  assign s = section.settings
+  assign overlay = s.overlay_opacity | divided_by: 100.0
+-%}
+<section
+  class="image-banner image-banner--{{ s.height }}"
+  data-text="{{ s.text_color }}"
+  {% if s.header_overlap %}data-header-overlap{% endif %}
+  style="--overlay: {{ overlay }}; --content-width: {{ s.content_width }}px;"
+>
+  <div class="image-banner__media"{% if s.parallax %} data-parallax="70"{% endif %}>
+    {%- if s.image != blank -%}
+      {%- render 'responsive-picture', desktop: s.image, mobile: s.image_mobile, loading: 'lazy', class: 'image-banner__image', alt: s.image.alt, parallax: s.parallax -%}
+    {%- else -%}
+      {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+    <div class="hero__overlay" aria-hidden="true"></div>
+  </div>
+  <div class="image-banner__layout page-width image-banner__layout--{{ s.vertical_position }}">
+    <div class="image-banner__content image-banner__content--{{ s.content_alignment }} stack" style="--stack-gap: 1rem;" data-reveal>
+      {%- if s.eyebrow != blank -%}<p class="eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="h1">{{ s.heading | escape }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="rte lead">{{ s.text }}</div>{%- endif -%}
+      {%- if s.button_label != blank -%}
+        <div><a href="{{ s.button_link | default: '#' }}" class="button">{{ s.button_label | escape }}{% if settings.button_arrow %} {% render 'icon', name: 'arrow-right', class: 'button__arrow' %}{% endif %}</a></div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image banner",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Mobile image" },
+    { "type": "checkbox", "id": "parallax", "label": "Subtle parallax", "default": true },
+    { "type": "select", "id": "height", "label": "Height", "options": [ { "value": "small", "label": "Small" }, { "value": "medium", "label": "Medium" }, { "value": "large", "label": "Large" } ], "default": "medium" },
+    { "type": "checkbox", "id": "header_overlap", "label": "Header overlaps this section", "info": "Use when this is the first section on a page and the transparent header is enabled.", "default": false },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The autumn edit" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Explore" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "select", "id": "content_alignment", "label": "Content position", "options": [ { "value": "start", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "end", "label": "Right" } ], "default": "center" },
+    { "type": "select", "id": "vertical_position", "label": "Vertical position", "options": [ { "value": "top", "label": "Top" }, { "value": "center", "label": "Middle" }, { "value": "bottom", "label": "Bottom" } ], "default": "center" },
+    { "type": "range", "id": "content_width", "label": "Content width", "min": 360, "max": 900, "step": 20, "unit": "px", "default": 560 },
+    { "type": "select", "id": "text_color", "label": "Text colour", "options": [ { "value": "light", "label": "Light" }, { "value": "dark", "label": "Dark" } ], "default": "light" },
+    { "type": "range", "id": "overlay_opacity", "label": "Image overlay", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 30 }
+  ],
+  "presets": [ { "name": "Image banner" } ]
+}
+{% endschema %}

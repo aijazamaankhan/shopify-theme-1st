@@ -1,0 +1,37 @@
+{%- comment -%}
+  Art-directed image: separate mobile image below 750px.
+  Params: desktop (required), mobile (optional), sizes, loading, fetchpriority, class, alt, parallax (bool)
+{%- endcomment -%}
+{%- liquid
+  assign pic_loading = loading | default: 'lazy'
+  assign pic_alt = alt | default: desktop.alt | default: ''
+  assign desktop_focal = desktop.presentation.focal_point | default: '50% 50%'
+  assign focal_style = 'object-position: ' | append: desktop_focal
+  assign pic_sizes = sizes | default: '100vw'
+  assign pic_priority = fetchpriority | default: 'auto'
+-%}
+{%- if desktop != blank -%}
+  <picture>
+    {%- if mobile != blank -%}
+      <source
+        media="(max-width: 749px)"
+        srcset="{{ mobile | image_url: width: 480 }} 480w, {{ mobile | image_url: width: 750 }} 750w, {{ mobile | image_url: width: 1000 }} 1000w"
+        sizes="100vw"
+        width="{{ mobile.width }}"
+        height="{{ mobile.height }}"
+      >
+    {%- endif -%}
+    {{
+      desktop
+      | image_url: width: 2400
+      | image_tag:
+        widths: '750, 1100, 1500, 1900, 2400',
+        sizes: pic_sizes,
+        loading: pic_loading,
+        fetchpriority: pic_priority,
+        class: class,
+        alt: pic_alt,
+        style: focal_style
+    }}
+  </picture>
+{%- endif -%}

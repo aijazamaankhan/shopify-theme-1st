@@ -1,0 +1,12 @@
+{%- comment -%} Params: title, text, link_url, link_label. Falls back to generic translated copy. {%- endcomment -%}
+{%- liquid
+  assign empty_title = title | default: 'general.empty.title' | t
+  assign empty_text = text | default: 'general.empty.text' | t
+-%}
+<div class="empty-state">
+  <h2 class="empty-state__title h3">{{ empty_title | escape }}</h2>
+  <p class="empty-state__text">{{ empty_text | escape }}</p>
+  {%- if link_url != blank and link_label != blank -%}
+    <a href="{{ link_url }}" class="button">{{ link_label | escape }}</a>
+  {%- endif -%}
+</div>

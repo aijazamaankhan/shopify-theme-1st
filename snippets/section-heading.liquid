@@ -1,0 +1,21 @@
+{%- comment -%}
+  Standard section heading row.
+  Params: eyebrow, heading, text (rich text allowed), align ('left'|'center'), link_url, link_label, tag ('h2'|'h1')
+{%- endcomment -%}
+{%- if heading != blank or text != blank or eyebrow != blank or link_label != blank -%}
+  <div class="section-header{% if align == 'center' %} section-header--center{% endif %}" data-reveal>
+    <div class="section-header__main">
+      {%- if eyebrow != blank -%}<p class="eyebrow">{{ eyebrow | escape }}</p>{%- endif -%}
+      {%- if heading != blank -%}
+        <{{ tag | default: 'h2' }} class="section-header__title h2">{{ heading | escape }}</{{ tag | default: 'h2' }}>
+      {%- endif -%}
+      {%- if text != blank -%}<div class="section-header__text rte">{{ text }}</div>{%- endif -%}
+    </div>
+    {%- if link_url != blank and link_label != blank -%}
+      <a href="{{ link_url }}" class="button-text link-arrow">
+        {{ link_label | escape }}
+        {%- render 'icon', name: 'arrow-right', class: 'button__arrow' -%}
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}

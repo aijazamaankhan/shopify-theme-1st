@@ -1,0 +1,58 @@
+{%- assign s = section.settings -%}
+<section class="section section-padding color-{{ s.color_scheme }}" style="--pad-top: {{ s.padding_top }}px; --pad-bottom: {{ s.padding_bottom }}px;">
+  <div class="page-width page-width--narrow">
+    {%- render 'section-heading', eyebrow: s.eyebrow, heading: s.heading, text: s.text, align: s.heading_align -%}
+    <div class="rte-table-wrap" data-reveal>
+      <table class="comparison">
+        <caption class="visually-hidden">{{ s.heading | escape }}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ 'sections.comparison.feature' | t }}</th>
+            <th scope="col" class="comparison__ours">{{ s.our_label | escape }}</th>
+            <th scope="col">{{ s.other_label | escape }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <th scope="row">{{ block.settings.feature | escape }}</th>
+              <td class="comparison__ours">{% if block.settings.ours %}{% render 'icon', name: 'check' %}<span class="visually-hidden">{{ 'sections.comparison.included' | t }}</span>{% else %}<span aria-hidden="true">&ndash;</span><span class="visually-hidden">{{ 'sections.comparison.not_included' | t }}</span>{% endif %}</td>
+              <td>{% if block.settings.others %}{% render 'icon', name: 'check' %}<span class="visually-hidden">{{ 'sections.comparison.included' | t }}</span>{% else %}<span aria-hidden="true">&ndash;</span><span class="visually-hidden">{{ 'sections.comparison.not_included' | t }}</span>{% endif %}</td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Feature comparison",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Why choose us" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "select", "id": "heading_align", "label": "Heading alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" } ], "default": "center" },
+    { "type": "text", "id": "our_label", "label": "Our column label", "default": "Us" },
+    { "type": "text", "id": "other_label", "label": "Other column label", "default": "Typical alternatives" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Colour scheme", "default": "scheme-1" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        { "type": "text", "id": "feature", "label": "Feature", "default": "Feature" },
+        { "type": "checkbox", "id": "ours", "label": "Included by us", "default": true },
+        { "type": "checkbox", "id": "others", "label": "Included by others", "default": false }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [ { "name": "Feature comparison", "blocks": [ { "type": "feature" }, { "type": "feature" }, { "type": "feature" } ] } ]
+}
+{% endschema %}

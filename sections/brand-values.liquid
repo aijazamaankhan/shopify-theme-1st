@@ -1,0 +1,68 @@
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="section section-padding color-{{ s.color_scheme }}" style="--pad-top: {{ s.padding_top }}px; --pad-bottom: {{ s.padding_bottom }}px;">
+  <div class="page-width">
+    {%- render 'section-heading', eyebrow: s.eyebrow, heading: s.heading, text: s.text, align: s.heading_align -%}
+    <ul class="values values--{{ s.style }}" role="list" style="--cols-desktop: {{ s.columns }};">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        <li class="value" data-reveal style="--reveal-index: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
+          {%- if b.image != blank -%}
+            <span class="value__image media" style="--ratio: 1 / 1;">{%- render 'image', image: b.image, sizes: '96px', widths: '96,192,288', loading: 'lazy', alt: '' -%}</span>
+          {%- elsif b.icon != 'none' -%}
+            <span class="value__icon">{%- render 'icon', name: b.icon -%}</span>
+          {%- endif -%}
+          {%- if b.heading != blank -%}<h3 class="value__title h4">{{ b.heading | escape }}</h3>{%- endif -%}
+          {%- if b.text != blank -%}<div class="value__text rte muted">{{ b.text }}</div>{%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand values",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "select", "id": "heading_align", "label": "Heading alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" } ], "default": "center" },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "select", "id": "style", "label": "Style", "options": [ { "value": "plain", "label": "Plain" }, { "value": "divided", "label": "With dividers" } ], "default": "divided" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Colour scheme", "default": "scheme-1" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "settings": [
+        {
+          "type": "select", "id": "icon", "label": "Icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "truck", "label": "Delivery" },
+            { "value": "return", "label": "Returns" },
+            { "value": "shield", "label": "Guarantee" },
+            { "value": "leaf", "label": "Sustainability" },
+            { "value": "sparkle", "label": "Quality" },
+            { "value": "gift", "label": "Gifting" }
+          ],
+          "default": "sparkle"
+        },
+        { "type": "image_picker", "id": "image", "label": "Image instead of icon" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Made to last" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Describe a promise you really keep.</p>" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    { "name": "Brand values", "blocks": [ { "type": "value", "settings": { "icon": "leaf", "heading": "Considered materials" } }, { "type": "value", "settings": { "icon": "return", "heading": "Easy returns" } }, { "type": "value", "settings": { "icon": "truck", "heading": "Careful delivery" } } ] }
+  ]
+}
+{% endschema %}

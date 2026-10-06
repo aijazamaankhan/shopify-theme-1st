@@ -1,0 +1,63 @@
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="section section-padding color-{{ s.color_scheme }}" style="--pad-top: {{ s.padding_top }}px; --pad-bottom: {{ s.padding_bottom }}px;">
+  <div class="page-width">
+    {%- render 'section-heading', eyebrow: s.eyebrow, heading: s.heading, text: s.text, align: s.heading_align -%}
+
+    <div class="collage collage--{{ section.blocks.size }} collage--{{ s.style }}">
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        {%- assign tag = 'div' -%}
+        {%- if b.link != blank -%}{%- assign tag = 'a' -%}{%- endif -%}
+        <{{ tag }} class="collage__item collage__item--{{ forloop.index }}"{% if b.link != blank %} href="{{ b.link }}"{% endif %} data-reveal style="--reveal-index: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
+          <span class="collage__media media">
+            {%- if b.image != blank -%}
+              {%- render 'image', image: b.image, sizes: '(min-width: 990px) 40vw, 100vw', widths: '540,720,1000,1400', loading: 'lazy', alt: b.image.alt | default: b.caption -%}
+            {%- else -%}
+              {{ 'lifestyle-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </span>
+          {%- if b.caption != blank -%}
+            <span class="collage__caption">
+              <span class="collage__caption-text">{{ b.caption | escape }}</span>
+              {%- if b.link != blank -%}{% render 'icon', name: 'arrow-right' %}{%- endif -%}
+            </span>
+          {%- endif -%}
+        </{{ tag }}>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image collage",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "In the studio" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "select", "id": "heading_align", "label": "Heading alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" } ], "default": "left" },
+    { "type": "select", "id": "style", "label": "Arrangement", "options": [ { "value": "offset", "label": "Offset (staggered)" }, { "value": "tiled", "label": "Tiled (aligned)" } ], "default": "offset" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Colour scheme", "default": "scheme-2" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "caption", "label": "Caption" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    { "name": "Image collage", "blocks": [ { "type": "image", "settings": { "caption": "Linen and wool" } }, { "type": "image", "settings": { "caption": "Ceramics" } }, { "type": "image", "settings": { "caption": "Oak and ash" } } ] }
+  ]
+}
+{% endschema %}

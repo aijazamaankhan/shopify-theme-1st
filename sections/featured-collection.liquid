@@ -1,0 +1,95 @@
+{%- liquid
+  assign s = section.settings
+  assign collection = s.collection
+  assign products = collection.products
+  assign mobile_cols = s.mobile_columns
+-%}
+<section class="section section-padding color-{{ s.color_scheme }}" style="--pad-top: {{ s.padding_top }}px; --pad-bottom: {{ s.padding_bottom }}px;">
+  <div class="page-width">
+    {%- render 'section-heading',
+      eyebrow: s.eyebrow,
+      heading: s.heading,
+      text: s.text,
+      align: s.heading_align,
+      link_url: collection.url,
+      link_label: s.link_label
+    -%}
+
+    {%- if collection != blank and products.size > 0 -%}
+      <scroll-row class="scroll-row{% if s.mobile_scroll %} scroll-row--active{% endif %}">
+        <ul
+          class="grid product-grid scroll-row__track"
+          role="list"
+          style="--cols-desktop: {{ s.columns }}; --cols-mobile: {{ mobile_cols }}; --cols-tablet: {{ s.columns | at_most: 3 }};"
+        >
+          {%- for product in products limit: s.product_count -%}
+            <li class="scroll-row__item">
+              {%- render 'product-card',
+                product: product,
+                index: forloop.index0,
+                loading: 'lazy'
+              -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+        {%- if s.mobile_scroll -%}
+          <div class="scroll-row__controls">
+            <button type="button" class="icon-button" data-scroll-prev disabled>{% render 'icon', name: 'arrow-left' %}<span class="visually-hidden">{{ 'general.slider.previous' | t }}</span></button>
+            <button type="button" class="icon-button" data-scroll-next>{% render 'icon', name: 'arrow-right' %}<span class="visually-hidden">{{ 'general.slider.next' | t }}</span></button>
+          </div>
+        {%- endif -%}
+      </scroll-row>
+    {%- elsif collection != blank -%}
+      {%- render 'empty-state', title: collection.title -%}
+    {%- else -%}
+      <ul class="grid product-grid" role="list" style="--cols-desktop: {{ s.columns }}; --cols-mobile: {{ mobile_cols }}; --cols-tablet: {{ s.columns | at_most: 3 }};">
+        {%- for i in (1..4) -%}
+          <li>
+            <article class="product-card product-card--{{ settings.card_align }}" data-reveal style="--reveal-index: {{ forloop.index0 }};">
+              <div class="product-card__media media" style="--ratio: 4 / 5;">{{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}</div>
+              <div class="product-card__info">
+                <h3 class="product-card__title h5">{{ 'general.placeholder.heading' | t }}</h3>
+              </div>
+            </article>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if s.show_view_all and collection != blank -%}
+      <div class="section-footer">
+        <a href="{{ collection.url }}" class="button-outline">{{ 'general.view_all_products' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "tag": "div",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Best sellers or new arrivals: pick a collection whose sort order is set to \"Best selling\" or \"Date, new to old\" in your Shopify admin." },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Featured products" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "select", "id": "heading_align", "label": "Heading alignment", "options": [ { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" } ], "default": "left" },
+    { "type": "text", "id": "link_label", "label": "Heading link label", "default": "Shop all" },
+    { "type": "checkbox", "id": "show_view_all", "label": "Show \"View all\" button below the grid", "default": false },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "product_count", "label": "Number of products", "min": 2, "max": 16, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "range", "id": "mobile_columns", "label": "Columns on mobile", "min": 1, "max": 2, "step": 1, "default": 2 },
+    { "type": "checkbox", "id": "mobile_scroll", "label": "Swipe horizontally on mobile", "default": false },
+    { "type": "header", "content": "Colour and spacing" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Colour scheme", "default": "scheme-1" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 }
+  ],
+  "presets": [
+    { "name": "Featured collection" },
+    { "name": "Best sellers", "settings": { "heading": "Best sellers", "link_label": "Shop best sellers" } },
+    { "name": "New arrivals", "settings": { "heading": "New arrivals", "link_label": "Shop new in" } }
+  ]
+}
+{% endschema %}
