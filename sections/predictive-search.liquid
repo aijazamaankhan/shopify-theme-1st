@@ -1,0 +1,99 @@
+{%- comment -%}
+  Rendered only through the Section Rendering API: /search/suggest?q=…&section_id=predictive-search
+  Server output is Shopify-escaped; client inserts it via DOMParser from same-origin responses.
+{%- endcomment -%}
+{%- if predictive_search.performed -%}
+  {%- liquid
+    assign products = predictive_search.resources.products
+    assign collections = predictive_search.resources.collections
+    assign articles = predictive_search.resources.articles
+    assign pages = predictive_search.resources.pages
+    assign queries = predictive_search.resources.queries
+    assign safe_terms = predictive_search.terms | escape
+    assign total = products.size | plus: collections.size | plus: articles.size | plus: pages.size | plus: queries.size
+  -%}
+  <div class="predictive-results" data-total="{{ total }}">
+    {%- if total == 0 -%}
+      <p class="predictive-results__empty">{{ 'search.general.no_results_for' | t: terms: safe_terms }}</p>
+    {%- else -%}
+      <div class="predictive-results__grid">
+        {%- if queries.size > 0 -%}
+          <section class="predictive-results__group predictive-results__group--queries" aria-labelledby="PS-Queries">
+            <h2 class="eyebrow" id="PS-Queries">{{ 'search.general.suggestions' | t }}</h2>
+            <ul role="list" class="predictive-results__list">
+              {%- for query in queries -%}
+                <li><a href="{{ query.url }}" class="predictive-results__link" data-result>{{ query.styled_text }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+
+        {%- if collections.size > 0 -%}
+          <section class="predictive-results__group" aria-labelledby="PS-Collections">
+            <h2 class="eyebrow" id="PS-Collections">{{ 'search.general.collections' | t }}</h2>
+            <ul role="list" class="predictive-results__list">
+              {%- for collection in collections -%}
+                <li><a href="{{ collection.url }}" class="predictive-results__link" data-result>{{ collection.title | escape }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+
+        {%- if pages.size > 0 or articles.size > 0 -%}
+          <section class="predictive-results__group" aria-labelledby="PS-Pages">
+            <h2 class="eyebrow" id="PS-Pages">{{ 'search.general.pages_articles' | t }}</h2>
+            <ul role="list" class="predictive-results__list">
+              {%- for page in pages -%}
+                <li><a href="{{ page.url }}" class="predictive-results__link" data-result>{{ page.title | escape }}</a></li>
+              {%- endfor -%}
+              {%- for article in articles -%}
+                <li><a href="{{ article.url }}" class="predictive-results__link" data-result>{{ article.title | escape }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+
+        {%- if products.size > 0 -%}
+          <section class="predictive-results__group predictive-results__group--products" aria-labelledby="PS-Products">
+            <h2 class="eyebrow" id="PS-Products">{{ 'search.general.products' | t }}</h2>
+            <ul role="list" class="predictive-results__products">
+              {%- for product in products -%}
+                <li>
+                  <a href="{{ product.url }}" class="predictive-product" data-result>
+                    <span class="predictive-product__media media" style="--ratio: 4 / 5;">
+                      {%- if product.featured_media -%}
+                        {{ product.featured_media | image_url: width: 160 | image_tag: width: 80, height: 100, loading: 'lazy', alt: product.featured_media.alt | default: '' }}
+                      {%- else -%}
+                        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                      {%- endif -%}
+                    </span>
+                    <span class="predictive-product__info">
+                      {%- if settings.predictive_search_show_vendor and product.vendor != blank -%}<span class="caption">{{ product.vendor | escape }}</span>{%- endif -%}
+                      <span class="predictive-product__title">{{ product.title | escape }}</span>
+                      {%- if settings.predictive_search_show_price -%}
+                        {%- render 'price', product: product -%}
+                      {%- endif -%}
+                    </span>
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </section>
+        {%- endif -%}
+      </div>
+      <p class="predictive-results__all">
+        <a href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&options%5Bprefix%5D=last" class="button-text" data-result>
+          {{ 'search.general.view_all' | t: terms: safe_terms }}
+          {% render 'icon', name: 'arrow-right', class: 'button__arrow' %}
+        </a>
+      </p>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Predictive search",
+  "settings": []
+}
+{% endschema %}

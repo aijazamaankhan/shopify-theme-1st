@@ -1,0 +1,41 @@
+{%- comment -%} Subtotal, discounts, note and checkout button. Params: context ('page' | 'drawer'), form_id {%- endcomment -%}
+<div class="cart-summary">
+  {%- if settings.cart_note -%}
+    <details class="cart-note">
+      <summary class="cart-note__summary">{{ 'cart.general.add_note' | t }}</summary>
+      <label class="visually-hidden" for="{{ context }}-cart-note">{{ 'cart.general.note_label' | t }}</label>
+      <textarea id="{{ context }}-cart-note" name="note" form="{{ form_id }}" class="field__input" data-cart-note>{{ cart.note }}</textarea>
+    </details>
+  {%- endif -%}
+
+  {%- if cart.cart_level_discount_applications.size > 0 -%}
+    <ul class="cart-summary__discounts" role="list">
+      {%- for discount in cart.cart_level_discount_applications -%}
+        <li class="cart-summary__discount">{% render 'icon', name: 'check' %} {{ discount.title | escape }} <span>(&minus;{{ discount.total_allocated_amount | money }})</span></li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+  <div class="cart-summary__total">
+    <span class="cart-summary__label">{{ 'cart.general.subtotal' | t }}</span>
+    <span class="cart-summary__value" data-cart-subtotal>{{ cart.total_price | money_with_currency }}</span>
+  </div>
+  <p class="caption cart-summary__tax">
+    {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+      {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+    {%- elsif cart.taxes_included -%}
+      {{ 'cart.general.taxes_included' | t }}
+    {%- elsif shop.shipping_policy.body != blank -%}
+      {{ 'cart.general.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+    {%- else -%}
+      {{ 'cart.general.taxes_shipping_at_checkout' | t }}
+    {%- endif -%}
+  </p>
+
+  <button type="submit" name="checkout" form="{{ form_id }}" class="button button--full cart-summary__checkout"{% if cart.item_count == 0 %} disabled{% endif %}>
+    {{ 'cart.general.checkout' | t }}
+  </button>
+  <noscript>
+    <button type="submit" name="update" form="{{ form_id }}" class="button-outline button--full">{{ 'cart.general.update' | t }}</button>
+  </noscript>
+</div>

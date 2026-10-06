@@ -1,0 +1,236 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Halden",
+    "theme_version": "1.0.0",
+    "theme_author": "Halden Themes",
+    "theme_documentation_url": "https://github.com/aijazamaankhan/shopify-theme-1st/blob/main/README.md",
+    "theme_support_url": "https://github.com/aijazamaankhan/shopify-theme-1st/issues"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Each section picks one of the colour schemes below. Edit a scheme once and every section that uses it updates."
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent colour",
+        "info": "Used for sale labels, link hover, focus rings and small highlights. Keep enough contrast against your backgrounds.",
+        "default": "#9A4A2B"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale price colour",
+        "default": "#A3321C"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success colour",
+        "default": "#2F6B3F"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Error colour",
+        "default": "#B3261E"
+      },
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          { "type": "color", "id": "background", "label": "Background", "default": "#F6F2EC" },
+          { "type": "color", "id": "background_alt", "label": "Alternate background", "info": "Cards, inputs and quiet panels.", "default": "#ECE6DC" },
+          { "type": "color", "id": "text", "label": "Text", "default": "#1F1D1A" },
+          { "type": "color", "id": "text_muted", "label": "Muted text", "default": "#5F5A52" },
+          { "type": "color", "id": "border", "label": "Border", "default": "#D8D0C3" },
+          { "type": "color", "id": "button", "label": "Button background", "default": "#1F1D1A" },
+          { "type": "color", "id": "button_label", "label": "Button label", "default": "#F6F2EC" },
+          { "type": "color", "id": "secondary_button_label", "label": "Outline button label", "default": "#1F1D1A" },
+          { "type": "color", "id": "link", "label": "Links", "default": "#1F1D1A" }
+        ],
+        "role": {
+          "background": "background",
+          "text": "text",
+          "primary_button": "button",
+          "on_primary_button": "button_label",
+          "primary_button_border": "button",
+          "secondary_button": "background",
+          "on_secondary_button": "secondary_button_label",
+          "secondary_button_border": "secondary_button_label",
+          "links": "link",
+          "icons": "text"
+        }
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "header", "content": "Headings" },
+      { "type": "font_picker", "id": "type_heading_font", "label": "Heading font", "default": "playfair_display_n4" },
+      {
+        "type": "range", "id": "heading_scale", "label": "Heading size", "min": 85, "max": 130, "step": 5, "unit": "%", "default": 100
+      },
+      {
+        "type": "select", "id": "heading_case", "label": "Heading case",
+        "options": [
+          { "value": "none", "label": "Sentence / as typed" },
+          { "value": "uppercase", "label": "Uppercase" }
+        ],
+        "default": "none"
+      },
+      { "type": "header", "content": "Body" },
+      { "type": "font_picker", "id": "type_body_font", "label": "Body font", "default": "inter_n4" },
+      {
+        "type": "range", "id": "body_scale", "label": "Body text size", "min": 90, "max": 120, "step": 5, "unit": "%", "default": 100
+      },
+      { "type": "header", "content": "Buttons and labels" },
+      {
+        "type": "select", "id": "button_case", "label": "Button and label case",
+        "options": [
+          { "value": "none", "label": "As typed" },
+          { "value": "uppercase", "label": "Uppercase" }
+        ],
+        "default": "uppercase"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "select", "id": "page_width", "label": "Page width",
+        "options": [
+          { "value": "1200", "label": "Narrow (1200px)" },
+          { "value": "1440", "label": "Standard (1440px)" },
+          { "value": "1680", "label": "Wide (1680px)" },
+          { "value": "100", "label": "Full width" }
+        ],
+        "default": "1440"
+      },
+      { "type": "range", "id": "gutter_desktop", "label": "Page gutter (desktop)", "min": 16, "max": 80, "step": 4, "unit": "px", "default": 40 },
+      { "type": "range", "id": "gutter_mobile", "label": "Page gutter (mobile)", "min": 12, "max": 32, "step": 2, "unit": "px", "default": 20 },
+      { "type": "range", "id": "section_spacing", "label": "Section spacing", "min": 0, "max": 40, "step": 4, "unit": "px", "default": 0, "info": "Extra spacing added between all sections. Each section also has its own padding." },
+      { "type": "range", "id": "grid_gap_desktop", "label": "Grid gap (desktop)", "min": 8, "max": 48, "step": 4, "unit": "px", "default": 24 },
+      { "type": "range", "id": "grid_gap_mobile", "label": "Grid gap (mobile)", "min": 8, "max": 24, "step": 2, "unit": "px", "default": 12 }
+    ]
+  },
+  {
+    "name": "Buttons and inputs",
+    "settings": [
+      { "type": "range", "id": "button_radius", "label": "Button corner radius", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 0 },
+      { "type": "range", "id": "input_radius", "label": "Input corner radius", "min": 0, "max": 20, "step": 2, "unit": "px", "default": 0 },
+      { "type": "range", "id": "media_radius", "label": "Image corner radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 0 },
+      { "type": "checkbox", "id": "button_arrow", "label": "Show arrow on primary buttons", "default": true }
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {
+        "type": "select", "id": "card_ratio", "label": "Image ratio",
+        "options": [
+          { "value": "portrait", "label": "Portrait (4:5)" },
+          { "value": "tall", "label": "Tall (3:4)" },
+          { "value": "square", "label": "Square" },
+          { "value": "landscape", "label": "Landscape (4:3)" },
+          { "value": "natural", "label": "Natural (first image)" }
+        ],
+        "default": "portrait"
+      },
+      {
+        "type": "select", "id": "card_hover", "label": "Hover effect",
+        "options": [
+          { "value": "swap", "label": "Show second image" },
+          { "value": "zoom", "label": "Gentle zoom" },
+          { "value": "none", "label": "None" }
+        ],
+        "default": "swap"
+      },
+      {
+        "type": "select", "id": "card_align", "label": "Text alignment",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "center", "label": "Center" }
+        ],
+        "default": "left"
+      },
+      { "type": "checkbox", "id": "card_show_vendor", "label": "Show vendor", "default": false },
+      { "type": "checkbox", "id": "card_show_swatches", "label": "Show colour swatches", "info": "Shows swatches when the product has a Color option.", "default": true },
+      { "type": "checkbox", "id": "card_show_rating", "label": "Show rating", "info": "Needs a reviews app that writes the standard reviews.rating and reviews.rating_count product metafields.", "default": false },
+      { "type": "checkbox", "id": "quick_add", "label": "Enable quick add", "default": true },
+      { "type": "header", "content": "Badges" },
+      { "type": "checkbox", "id": "badge_sale", "label": "Show sale badge", "default": true },
+      { "type": "checkbox", "id": "badge_sold_out", "label": "Show sold-out badge", "default": true },
+      { "type": "checkbox", "id": "badge_percentage", "label": "Show percentage saved on sale badge", "default": false },
+      { "type": "text", "id": "badge_tag_prefix", "label": "Custom badge tag prefix", "info": "Product tags starting with this prefix become badges, e.g. a tag \"badge:New\" shows \"New\".", "default": "badge:" }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select", "id": "cart_type", "label": "Cart type",
+        "options": [
+          { "value": "drawer", "label": "Drawer" },
+          { "value": "page", "label": "Cart page" }
+        ],
+        "default": "drawer"
+      },
+      { "type": "checkbox", "id": "cart_note", "label": "Enable order note", "default": true },
+      { "type": "checkbox", "id": "cart_recommendations", "label": "Show recommendations in empty cart", "default": true },
+      { "type": "checkbox", "id": "cart_open_on_add", "label": "Open drawer after adding to cart", "default": true }
+    ]
+  },
+  {
+    "name": "Animations",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Motion always respects the visitor's reduced-motion system preference, regardless of these settings."
+      },
+      { "type": "checkbox", "id": "animations", "label": "Enable decorative animations", "info": "Scroll reveals, hero intro and image transitions. Turn off for a static, instant experience.", "default": true },
+      {
+        "type": "select", "id": "animation_intensity", "label": "Animation intensity",
+        "options": [
+          { "value": "subtle", "label": "Subtle" },
+          { "value": "standard", "label": "Standard" },
+          { "value": "expressive", "label": "Expressive" }
+        ],
+        "default": "standard"
+      },
+      { "type": "checkbox", "id": "parallax", "label": "Enable subtle parallax on selected images", "default": true },
+      { "type": "checkbox", "id": "page_transitions", "label": "Smooth page-to-page fade", "info": "Uses the browser's cross-document view transitions where supported. Ignored elsewhere.", "default": false }
+    ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      { "type": "checkbox", "id": "predictive_search", "label": "Enable predictive search", "default": true },
+      { "type": "checkbox", "id": "predictive_search_show_price", "label": "Show prices in suggestions", "default": true },
+      { "type": "checkbox", "id": "predictive_search_show_vendor", "label": "Show vendor in suggestions", "default": false }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Square, at least 32 x 32px." }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      { "type": "text", "id": "social_instagram", "label": "Instagram URL" },
+      { "type": "text", "id": "social_facebook", "label": "Facebook URL" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok URL" },
+      { "type": "text", "id": "social_pinterest", "label": "Pinterest URL" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube URL" },
+      { "type": "text", "id": "social_x", "label": "X (Twitter) URL" }
+    ]
+  }
+]

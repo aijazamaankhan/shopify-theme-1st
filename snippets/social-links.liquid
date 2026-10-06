@@ -1,0 +1,17 @@
+{%- comment -%} Social icon links from theme settings. Params: class {%- endcomment -%}
+{%- liquid
+  assign has_social = false
+  if settings.social_instagram != blank or settings.social_facebook != blank or settings.social_tiktok != blank or settings.social_pinterest != blank or settings.social_youtube != blank or settings.social_x != blank
+    assign has_social = true
+  endif
+-%}
+{%- if has_social -%}
+  <ul class="social-links {{ class }}" role="list">
+    {%- if settings.social_instagram != blank -%}<li><a href="{{ settings.social_instagram }}" class="icon-button" rel="noopener" target="_blank">{% render 'icon', name: 'instagram' %}<span class="visually-hidden">Instagram {{ 'general.social.opens_new_tab' | t }}</span></a></li>{%- endif -%}
+    {%- if settings.social_facebook != blank -%}<li><a href="{{ settings.social_facebook }}" class="icon-button" rel="noopener" target="_blank">{% render 'icon', name: 'facebook' %}<span class="visually-hidden">Facebook {{ 'general.social.opens_new_tab' | t }}</span></a></li>{%- endif -%}
+    {%- if settings.social_tiktok != blank -%}<li><a href="{{ settings.social_tiktok }}" class="icon-button" rel="noopener" target="_blank">{% render 'icon', name: 'tiktok' %}<span class="visually-hidden">TikTok {{ 'general.social.opens_new_tab' | t }}</span></a></li>{%- endif -%}
+    {%- if settings.social_pinterest != blank -%}<li><a href="{{ settings.social_pinterest }}" class="icon-button" rel="noopener" target="_blank">{% render 'icon', name: 'pinterest' %}<span class="visually-hidden">Pinterest {{ 'general.social.opens_new_tab' | t }}</span></a></li>{%- endif -%}
+    {%- if settings.social_youtube != blank -%}<li><a href="{{ settings.social_youtube }}" class="icon-button" rel="noopener" target="_blank">{% render 'icon', name: 'youtube' %}<span class="visually-hidden">YouTube {{ 'general.social.opens_new_tab' | t }}</span></a></li>{%- endif -%}
+    {%- if settings.social_x != blank -%}<li><a href="{{ settings.social_x }}" class="icon-button" rel="noopener" target="_blank">{% render 'icon', name: 'x' %}<span class="visually-hidden">X {{ 'general.social.opens_new_tab' | t }}</span></a></li>{%- endif -%}
+  </ul>
+{%- endif -%}

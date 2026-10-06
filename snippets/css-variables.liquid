@@ -1,0 +1,111 @@
+{%- comment -%}
+  Design tokens. Everything visual in the CSS files reads these variables.
+  Emits: font faces, :root tokens, and one .color-<scheme-id> class per colour scheme.
+{%- endcomment -%}
+{%- liquid
+  assign heading_font = settings.type_heading_font
+  assign body_font = settings.type_body_font
+  assign body_font_bold = body_font | font_modify: 'weight', 'bold'
+  assign body_font_italic = body_font | font_modify: 'style', 'italic'
+  if settings.page_width == '100'
+    assign page_max = '100%'
+  else
+    assign page_max = settings.page_width | append: 'px'
+  endif
+-%}
+<style data-shopify>
+  {{ heading_font | font_face: font_display: 'swap' }}
+  {{ body_font | font_face: font_display: 'swap' }}
+  {{ body_font_bold | font_face: font_display: 'swap' }}
+  {{ body_font_italic | font_face: font_display: 'swap' }}
+
+  :root {
+    --font-heading-family: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+    --font-heading-style: {{ heading_font.style }};
+    --font-heading-weight: {{ heading_font.weight }};
+    --font-body-family: {{ body_font.family }}, {{ body_font.fallback_families }};
+    --font-body-style: {{ body_font.style }};
+    --font-body-weight: {{ body_font.weight }};
+    --font-body-weight-bold: {{ body_font_bold.weight }};
+    --heading-scale: {{ settings.heading_scale | divided_by: 100.0 }};
+    --body-scale: {{ settings.body_scale | divided_by: 100.0 }};
+    --heading-transform: {{ settings.heading_case }};
+    --button-transform: {{ settings.button_case }};
+
+    --page-max: {{ page_max }};
+    --gutter: {{ settings.gutter_mobile }}px;
+    --grid-gap: {{ settings.grid_gap_mobile }}px;
+    --section-gap: {{ settings.section_spacing }}px;
+
+    --radius-button: {{ settings.button_radius }}px;
+    --radius-input: {{ settings.input_radius }}px;
+    --radius-media: {{ settings.media_radius }}px;
+
+    --color-accent: {{ settings.color_accent }};
+    --color-sale: {{ settings.color_sale }};
+    --color-success: {{ settings.color_success }};
+    --color-error: {{ settings.color_error }};
+
+    --motion-distance: {% case settings.animation_intensity %}{% when 'subtle' %}10px{% when 'expressive' %}40px{% else %}22px{% endcase %};
+    --motion-scale: {% case settings.animation_intensity %}{% when 'subtle' %}1.02{% when 'expressive' %}1.1{% else %}1.05{% endcase %};
+    --dur-fast: 150ms;
+    --dur-base: {% case settings.animation_intensity %}{% when 'subtle' %}260ms{% when 'expressive' %}420ms{% else %}320ms{% endcase %};
+    --dur-slow: {% case settings.animation_intensity %}{% when 'subtle' %}600ms{% when 'expressive' %}1100ms{% else %}800ms{% endcase %};
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+    --z-base: 1;
+    --z-sticky: 20;
+    --z-header: 30;
+    --z-overlay: 60;
+    --z-drawer: 70;
+    --z-toast: 80;
+  }
+
+  @media (min-width: 750px) {
+    :root {
+      --gutter: {{ settings.gutter_desktop | at_most: 32 }}px;
+      --grid-gap: {{ settings.grid_gap_desktop | at_most: 20 }}px;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    :root {
+      --gutter: {{ settings.gutter_desktop }}px;
+      --grid-gap: {{ settings.grid_gap_desktop }}px;
+    }
+  }
+
+  {%- for scheme in settings.color_schemes %}
+    {%- assign s = scheme.settings %}
+  .color-{{ scheme.id }} {
+    --color-background: {{ s.background }};
+    --color-background-rgb: {{ s.background | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-background-alt: {{ s.background_alt }};
+    --color-text: {{ s.text }};
+    --color-text-rgb: {{ s.text | color_to_rgb | remove: 'rgb(' | remove: ')' }};
+    --color-text-muted: {{ s.text_muted }};
+    --color-border: {{ s.border }};
+    --color-button: {{ s.button }};
+    --color-button-label: {{ s.button_label }};
+    --color-button-outline: {{ s.secondary_button_label }};
+    --color-link: {{ s.link }};
+    --color-focus: {{ s.text }};
+  }
+  {%- endfor %}
+
+  body, .color-scheme-fallback {
+    --color-background: #F6F2EC;
+    --color-background-rgb: 246, 242, 236;
+    --color-background-alt: #ECE6DC;
+    --color-text: #1F1D1A;
+    --color-text-rgb: 31, 29, 26;
+    --color-text-muted: #5F5A52;
+    --color-border: #D8D0C3;
+    --color-button: #1F1D1A;
+    --color-button-label: #F6F2EC;
+    --color-button-outline: #1F1D1A;
+    --color-link: #1F1D1A;
+    --color-focus: #1F1D1A;
+  }
+</style>

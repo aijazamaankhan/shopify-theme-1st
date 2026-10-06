@@ -1,0 +1,75 @@
+{%- comment -%}
+  Cart drawer. Static section included from layout/theme.liquid and re-rendered through the Section Rendering API
+  (sections=cart-drawer) after every cart mutation. Dialog open state is preserved by cart.js.
+{%- endcomment -%}
+<dialog id="CartDrawer" class="drawer drawer--end drawer--cart color-{{ section.settings.color_scheme }}" aria-labelledby="CartDrawerTitle" data-drawer data-cart-drawer>
+  <div class="drawer__header">
+    <h2 class="drawer__title h5" id="CartDrawerTitle">
+      {{ 'cart.general.title' | t }}
+      <span class="drawer__count" data-drawer-count>({{ cart.item_count }})</span>
+    </h2>
+    <button type="button" class="icon-button" data-close-dialog>
+      {%- render 'icon', name: 'close' -%}
+      <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+    </button>
+  </div>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="drawer__body cart-empty" data-cart-body>
+      <p class="cart-empty__title h4">{{ 'cart.general.empty' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="button">{{ 'cart.general.continue_shopping' | t }}</a>
+      {%- if settings.cart_recommendations -%}
+        {%- liquid
+          if section.settings.empty_collection != blank
+            assign rec_collection = section.settings.empty_collection
+          else
+            assign rec_collection = collections['all']
+          endif
+        -%}
+        {%- if rec_collection.products.size > 0 -%}
+          <div class="cart-empty__recs">
+            <p class="eyebrow">{{ 'cart.general.you_may_like' | t }}</p>
+            <ul class="cart-empty__list" role="list">
+              {%- for product in rec_collection.products limit: 3 -%}
+                <li>
+                  <a href="{{ product.url }}" class="mini-product">
+                    <span class="media mini-product__media" style="--ratio: 4 / 5;">
+                      {%- if product.featured_media -%}
+                        {{ product.featured_media | image_url: width: 200 | image_tag: width: 72, height: 90, loading: 'lazy', alt: '' }}
+                      {%- else -%}
+                        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                      {%- endif -%}
+                    </span>
+                    <span class="mini-product__info">
+                      <span class="mini-product__title">{{ product.title | escape }}</span>
+                      {%- render 'price', product: product -%}
+                    </span>
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" id="CartDrawerForm" class="drawer__form" data-cart-form>
+      <div class="drawer__body" data-cart-body>
+        {%- render 'cart-lines', context: 'drawer' -%}
+      </div>
+      <div class="drawer__footer">
+        {%- render 'cart-summary', context: 'drawer', form_id: 'CartDrawerForm' -%}
+      </div>
+    </form>
+  {%- endif -%}
+</dialog>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Colour scheme", "default": "scheme-1" },
+    { "type": "collection", "id": "empty_collection", "label": "Empty cart collection", "info": "Products suggested when the cart is empty. Falls back to all products." }
+  ]
+}
+{% endschema %}

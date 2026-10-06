@@ -1,0 +1,114 @@
+{
+  "current": {
+    "color_accent": "#9A4A2B",
+    "color_sale": "#A3321C",
+    "color_success": "#2F6B3F",
+    "color_error": "#B3261E",
+    "color_schemes": {
+      "scheme-1": {
+        "settings": {
+          "background": "#F6F2EC",
+          "background_alt": "#ECE6DC",
+          "text": "#1F1D1A",
+          "text_muted": "#5F5A52",
+          "border": "#D8D0C3",
+          "button": "#1F1D1A",
+          "button_label": "#F6F2EC",
+          "secondary_button_label": "#1F1D1A",
+          "link": "#1F1D1A"
+        }
+      },
+      "scheme-2": {
+        "settings": {
+          "background": "#ECE6DC",
+          "background_alt": "#F6F2EC",
+          "text": "#1F1D1A",
+          "text_muted": "#554F47",
+          "border": "#CFC6B7",
+          "button": "#1F1D1A",
+          "button_label": "#F6F2EC",
+          "secondary_button_label": "#1F1D1A",
+          "link": "#1F1D1A"
+        }
+      },
+      "scheme-3": {
+        "settings": {
+          "background": "#1F1D1A",
+          "background_alt": "#2B2824",
+          "text": "#F6F2EC",
+          "text_muted": "#BDB6AA",
+          "border": "#46413A",
+          "button": "#F6F2EC",
+          "button_label": "#1F1D1A",
+          "secondary_button_label": "#F6F2EC",
+          "link": "#F6F2EC"
+        }
+      },
+      "scheme-4": {
+        "settings": {
+          "background": "#7E3B22",
+          "background_alt": "#6F321B",
+          "text": "#FBF6EE",
+          "text_muted": "#E9D9C6",
+          "border": "#98583F",
+          "button": "#FBF6EE",
+          "button_label": "#4E2312",
+          "secondary_button_label": "#FBF6EE",
+          "link": "#FBF6EE"
+        }
+      },
+      "scheme-5": {
+        "settings": {
+          "background": "#FFFFFF",
+          "background_alt": "#F6F2EC",
+          "text": "#1F1D1A",
+          "text_muted": "#5F5A52",
+          "border": "#E4DED3",
+          "button": "#1F1D1A",
+          "button_label": "#FFFFFF",
+          "secondary_button_label": "#1F1D1A",
+          "link": "#1F1D1A"
+        }
+      }
+    },
+    "type_heading_font": "playfair_display_n4",
+    "heading_scale": 100,
+    "heading_case": "none",
+    "type_body_font": "inter_n4",
+    "body_scale": 100,
+    "button_case": "uppercase",
+    "page_width": "1440",
+    "gutter_desktop": 40,
+    "gutter_mobile": 20,
+    "section_spacing": 0,
+    "grid_gap_desktop": 24,
+    "grid_gap_mobile": 12,
+    "button_radius": 0,
+    "input_radius": 0,
+    "media_radius": 0,
+    "button_arrow": true,
+    "card_ratio": "portrait",
+    "card_hover": "swap",
+    "card_align": "left",
+    "card_show_vendor": false,
+    "card_show_swatches": true,
+    "card_show_rating": false,
+    "quick_add": true,
+    "badge_sale": true,
+    "badge_sold_out": true,
+    "badge_percentage": false,
+    "badge_tag_prefix": "badge:",
+    "cart_type": "drawer",
+    "cart_note": true,
+    "cart_recommendations": true,
+    "cart_open_on_add": true,
+    "animations": true,
+    "animation_intensity": "standard",
+    "parallax": true,
+    "page_transitions": false,
+    "predictive_search": true,
+    "predictive_search_show_price": true,
+    "predictive_search_show_vendor": false,
+    "sections": {}
+  }
+}

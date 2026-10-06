@@ -1,0 +1,281 @@
+{%- liquid
+  assign menu = section.settings.menu
+  assign scheme = section.settings.color_scheme
+  assign logo = section.settings.logo
+  assign logo_w = section.settings.logo_width
+-%}
+
+<header
+  class="site-header color-{{ scheme }}{% if section.settings.border %} site-header--border{% endif %}"
+  data-site-header
+  data-layout="{{ section.settings.layout }}"
+  data-sticky="{{ section.settings.sticky }}"
+  data-transparent="{{ section.settings.transparent }}"
+  data-transparent-text="{{ section.settings.transparent_text }}"
+>
+  <div class="site-header__inner page-width">
+    <div class="site-header__burger">
+      <button type="button" class="icon-button" data-open-dialog="MobileMenu" aria-haspopup="dialog" aria-controls="MobileMenu">
+        {%- render 'icon', name: 'menu' -%}
+        <span class="visually-hidden">{{ 'accessibility.open_menu' | t }}</span>
+      </button>
+    </div>
+
+    <div class="site-header__logo">
+      <div class="site-header__logo-heading">
+        <a href="{{ routes.root_url }}" class="site-header__logo-link" {% if request.page_type == 'index' %}aria-current="page"{% endif %}>
+          {%- if logo != blank -%}
+            {%- assign logo_height = logo_w | divided_by: logo.aspect_ratio | round -%}
+            {{ logo | image_url: width: 600 | image_tag:
+              widths: '120, 180, 240, 360, 480, 600',
+              sizes: logo_w | append: 'px',
+              width: logo_w,
+              height: logo_height,
+              loading: 'eager',
+              class: 'site-header__logo-image',
+              alt: shop.name }}
+          {%- else -%}
+            <span class="site-header__logo-text">{{ shop.name | escape }}</span>
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
+
+    <nav class="site-header__nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
+      {%- if menu != blank -%}
+        <ul class="nav-list" role="list">
+          {%- for link in menu.links -%}
+            {%- assign has_children = false -%}
+            {%- if link.links.size > 0 -%}{%- assign has_children = true -%}{%- endif -%}
+            {%- assign promo_count = 0 -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'menu_promo' and block.settings.parent_link == link.title -%}
+                {%- assign promo_count = promo_count | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- assign is_mega = false -%}
+            {%- if has_children and promo_count > 0 -%}{%- assign is_mega = true -%}{%- endif -%}
+            {%- if section.settings.mega_menu_all and has_children -%}
+              {%- for child in link.links -%}{%- if child.links.size > 0 -%}{%- assign is_mega = true -%}{%- endif -%}{%- endfor -%}
+            {%- endif -%}
+
+            <li class="nav-item{% if has_children %} nav-item--parent{% endif %}" {% if has_children %}data-menu-item{% endif %}>
+              <a
+                href="{{ link.url }}"
+                class="nav-link{% if link.active or link.child_active %} nav-link--active{% endif %}"
+                {% if link.current %}aria-current="page"{% endif %}
+              >{{ link.title | escape }}</a>
+              {%- if has_children -%}
+                <button
+                  type="button"
+                  class="nav-toggle"
+                  aria-expanded="false"
+                  aria-controls="Panel-{{ section.id }}-{{ forloop.index }}"
+                  data-menu-toggle
+                >
+                  {%- render 'icon', name: 'chevron-down' -%}
+                  <span class="visually-hidden">{{ 'accessibility.toggle_submenu' | t: title: link.title }}</span>
+                </button>
+
+                {%- if is_mega -%}
+                  <div class="mega-menu" id="Panel-{{ section.id }}-{{ forloop.index }}" data-menu-panel>
+                    <div class="mega-menu__inner page-width">
+                      <ul class="mega-menu__columns" role="list">
+                        {%- for child in link.links -%}
+                          <li class="mega-menu__column">
+                            <a href="{{ child.url }}" class="mega-menu__heading"{% if child.current %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
+                            {%- if child.links.size > 0 -%}
+                              <ul class="mega-menu__links" role="list">
+                                {%- for grandchild in child.links -%}
+                                  <li><a href="{{ grandchild.url }}" class="mega-menu__link"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
+                                {%- endfor -%}
+                              </ul>
+                            {%- endif -%}
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                      {%- assign shown_promos = 0 -%}
+                      {%- for promo in section.blocks -%}
+                        {%- if promo.type != 'menu_promo' or promo.settings.parent_link != link.title or shown_promos >= 2 -%}{%- continue -%}{%- endif -%}
+                        {%- assign shown_promos = shown_promos | plus: 1 -%}
+                        <a href="{{ promo.settings.link | default: link.url }}" class="mega-promo" {{ promo.shopify_attributes }}>
+                          <span class="media mega-promo__media" style="--ratio: 4 / 5;">
+                            {%- if promo.settings.image != blank -%}
+                              {%- assign promo_alt = promo.settings.image.alt | default: promo.settings.heading -%}
+                              {%- render 'image', image: promo.settings.image, sizes: '280px', widths: '280,420,560', loading: 'lazy', alt: promo_alt -%}
+                            {%- else -%}
+                              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                            {%- endif -%}
+                          </span>
+                          {%- if promo.settings.heading != blank -%}<span class="mega-promo__heading">{{ promo.settings.heading | escape }}</span>{%- endif -%}
+                          {%- if promo.settings.label != blank -%}<span class="mega-promo__label">{{ promo.settings.label | escape }} {% render 'icon', name: 'arrow-right' %}</span>{%- endif -%}
+                        </a>
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                {%- else -%}
+                  <div class="dropdown" id="Panel-{{ section.id }}-{{ forloop.index }}" data-menu-panel>
+                    <ul class="dropdown__list" role="list">
+                      {%- for child in link.links -%}
+                        <li>
+                          <a href="{{ child.url }}" class="dropdown__link"{% if child.current %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
+                          {%- if child.links.size > 0 -%}
+                            <ul class="dropdown__sublist" role="list">
+                              {%- for grandchild in child.links -%}
+                                <li><a href="{{ grandchild.url }}" class="dropdown__link dropdown__link--sub"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </nav>
+
+    <div class="site-header__icons">
+      {%- if section.settings.show_search -%}
+        <a href="{{ routes.search_url }}" class="icon-button" data-open-dialog="SearchModal" aria-haspopup="dialog" aria-controls="SearchModal">
+          {%- render 'icon', name: 'search' -%}
+          <span class="visually-hidden">{{ 'general.search.open' | t }}</span>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="icon-button site-header__account">
+          {%- render 'icon', name: 'account' -%}
+          <span class="visually-hidden">{% if customer %}{{ 'accessibility.account' | t }}{% else %}{{ 'accessibility.log_in' | t }}{% endif %}</span>
+        </a>
+      {%- endif -%}
+      <a href="{{ routes.cart_url }}" class="icon-button cart-link" id="CartLink" data-cart-link>
+        {%- render 'icon', name: 'bag' -%}
+        <span class="cart-count{% if cart.item_count == 0 %} is-empty{% endif %}" data-cart-count aria-hidden="true">{{ cart.item_count }}</span>
+        <span class="visually-hidden">{{ 'accessibility.cart' | t }} <span data-cart-count-label>({{ 'cart.general.items_count' | t: count: cart.item_count }})</span></span>
+      </a>
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Mobile menu drawer {%- endcomment -%}
+<dialog id="MobileMenu" class="drawer drawer--start color-{{ scheme }}" aria-label="{{ 'accessibility.main_navigation' | t }}" data-drawer>
+  <div class="drawer__header">
+    <span class="drawer__title h5">{{ 'general.menu' | t }}</span>
+    <button type="button" class="icon-button" data-close-dialog>
+      {%- render 'icon', name: 'close' -%}
+      <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+    </button>
+  </div>
+  <nav class="drawer__body mobile-nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
+    {%- if menu != blank -%}
+      <ul class="mobile-nav__list" role="list">
+        {%- for link in menu.links -%}
+          <li class="mobile-nav__item">
+            {%- if link.links.size > 0 -%}
+              <details class="mobile-nav__details">
+                <summary class="mobile-nav__summary">
+                  <span>{{ link.title | escape }}</span>
+                  {%- render 'icon', name: 'chevron-down' -%}
+                </summary>
+                <ul class="mobile-nav__sub" role="list">
+                  <li><a href="{{ link.url }}" class="mobile-nav__sublink mobile-nav__sublink--all">{{ 'general.view_all' | t }}</a></li>
+                  {%- for child in link.links -%}
+                    <li>
+                      {%- if child.links.size > 0 -%}
+                        <details class="mobile-nav__details mobile-nav__details--inner">
+                          <summary class="mobile-nav__summary mobile-nav__summary--inner">
+                            <span>{{ child.title | escape }}</span>
+                            {%- render 'icon', name: 'chevron-down' -%}
+                          </summary>
+                          <ul class="mobile-nav__sub" role="list">
+                            <li><a href="{{ child.url }}" class="mobile-nav__sublink mobile-nav__sublink--all">{{ 'general.view_all' | t }}</a></li>
+                            {%- for grandchild in child.links -%}
+                              <li><a href="{{ grandchild.url }}" class="mobile-nav__sublink"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
+                            {%- endfor -%}
+                          </ul>
+                        </details>
+                      {%- else -%}
+                        <a href="{{ child.url }}" class="mobile-nav__sublink"{% if child.current %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- else -%}
+              <a href="{{ link.url }}" class="mobile-nav__link"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <div class="mobile-nav__footer">
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="mobile-nav__utility">
+          {%- render 'icon', name: 'account' -%}
+          {% if customer %}{{ 'accessibility.account' | t }}{% else %}{{ 'accessibility.log_in' | t }}{% endif %}
+        </a>
+      {%- endif -%}
+      {%- render 'social-links', class: 'mobile-nav__social' -%}
+    </div>
+  </nav>
+</dialog>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image", "info": "If empty, your store name is shown as text." },
+    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 60, "max": 280, "step": 10, "unit": "px", "default": 140 },
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "select", "id": "layout", "label": "Desktop layout",
+      "options": [
+        { "value": "left", "label": "Logo left, menu beside" },
+        { "value": "center", "label": "Logo centered, menu left" },
+        { "value": "stacked", "label": "Logo centered, menu below" }
+      ],
+      "default": "center"
+    },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "mega_menu_all", "label": "Use mega menu for items with three levels", "info": "Items that have sub-sub-links open as a multi-column mega menu automatically. Add promo blocks to feature imagery.", "default": true },
+    { "type": "header", "content": "Icons" },
+    { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
+    { "type": "checkbox", "id": "show_account", "label": "Show account link", "default": true },
+    { "type": "header", "content": "Behavior" },
+    { "type": "checkbox", "id": "sticky", "label": "Sticky header", "default": true },
+    { "type": "checkbox", "id": "transparent", "label": "Transparent over hero", "info": "Only applies when the first section of a page is a hero or full-width banner with \"Header overlaps this section\" enabled.", "default": true },
+    {
+      "type": "select", "id": "transparent_text", "label": "Text colour while transparent",
+      "options": [
+        { "value": "light", "label": "Light" },
+        { "value": "dark", "label": "Dark" }
+      ],
+      "default": "light"
+    },
+    { "type": "checkbox", "id": "border", "label": "Show bottom border", "default": true },
+    { "type": "header", "content": "Colour" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Colour scheme", "default": "scheme-1" }
+  ],
+  "blocks": [
+    {
+      "type": "menu_promo",
+      "name": "Mega menu promo",
+      "limit": 8,
+      "settings": [
+        { "type": "paragraph", "content": "Shows a featured image in the mega menu of one top-level menu item. Add up to two per item." },
+        { "type": "text", "id": "parent_link", "label": "Top-level menu item title", "info": "Must match the menu item title exactly, e.g. Shop." },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "New season" },
+        { "type": "text", "id": "label", "label": "Link label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ]
+}
+{% endschema %}

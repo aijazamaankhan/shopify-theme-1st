@@ -1,0 +1,43 @@
+{%- comment -%}
+  Badges for a product card / gallery. Params: product (required)
+  Sold out and sale come from real product data; custom badges come from product tags with the configured prefix.
+{%- endcomment -%}
+{%- liquid
+  assign prefix = settings.badge_tag_prefix
+  assign has_badge = false
+  if product.available == false and settings.badge_sold_out
+    assign has_badge = true
+  elsif product.compare_at_price > product.price and settings.badge_sale
+    assign has_badge = true
+  endif
+  if prefix != blank
+    for tag in product.tags
+      if tag contains prefix
+        assign has_badge = true
+      endif
+    endfor
+  endif
+-%}
+{%- if has_badge -%}
+  <div class="badges">
+    {%- if product.available == false and settings.badge_sold_out -%}
+      <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+    {%- elsif product.compare_at_price > product.price and settings.badge_sale -%}
+      <span class="badge badge--sale">
+        {%- if settings.badge_percentage -%}
+          {%- assign saved = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
+          {{ 'products.product.save_percent' | t: percent: saved }}
+        {%- else -%}
+          {{ 'products.product.sale' | t }}
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+    {%- if prefix != blank -%}
+      {%- for tag in product.tags -%}
+        {%- if tag contains prefix -%}
+          <span class="badge badge--custom">{{ tag | remove_first: prefix | strip | escape }}</span>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+{%- endif -%}

@@ -1,0 +1,31 @@
+{%- comment -%}
+  Quantity stepper. Params: id, name, value, min, max, step, label (visible-hidden label text), line (cart line index, optional), class
+{%- endcomment -%}
+{%- liquid
+  assign qty_min = min | default: 1
+  assign qty_step = step | default: 1
+-%}
+<quantity-input class="quantity{% if class != blank %} {{ class }}{% endif %}">
+  <button type="button" class="quantity__button" name="minus" aria-controls="{{ id }}">
+    {%- render 'icon', name: 'minus' -%}
+    <span class="visually-hidden">{{ 'products.product.quantity.decrease' | t }}</span>
+  </button>
+  <input
+    type="number"
+    inputmode="numeric"
+    class="quantity__input"
+    id="{{ id }}"
+    name="{{ name | default: 'quantity' }}"
+    value="{{ value | default: 1 }}"
+    min="{% if line %}0{% else %}{{ qty_min }}{% endif %}"
+    {% if max != blank %}max="{{ max }}"{% endif %}
+    step="{{ qty_step }}"
+    {% if line %}data-line="{{ line }}"{% endif %}
+    data-min="{{ qty_min }}"
+    aria-label="{{ label | default: 'products.product.quantity.label' | t }}"
+  >
+  <button type="button" class="quantity__button" name="plus" aria-controls="{{ id }}">
+    {%- render 'icon', name: 'plus' -%}
+    <span class="visually-hidden">{{ 'products.product.quantity.increase' | t }}</span>
+  </button>
+</quantity-input>

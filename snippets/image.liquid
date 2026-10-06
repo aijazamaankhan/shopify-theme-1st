@@ -1,0 +1,36 @@
+{%- comment -%}
+  Responsive image wrapper.
+  Params: image (required), sizes, widths (comma list), loading ('lazy' | 'eager'), fetchpriority, class, alt, ratio_class
+  Always outputs width/height from the image so the browser reserves space.
+{%- endcomment -%}
+{%- liquid
+  assign img_widths = widths | default: '360,540,720,900,1080,1296,1512,1800,2200'
+  assign img_loading = loading | default: 'lazy'
+  assign img_sizes = sizes | default: '100vw'
+-%}
+{%- if image != blank -%}
+  {%- if fetchpriority == 'high' -%}
+    {{
+      image
+      | image_url: width: 2200
+      | image_tag:
+        widths: img_widths,
+        sizes: img_sizes,
+        loading: 'eager',
+        fetchpriority: 'high',
+        class: class,
+        alt: alt | default: image.alt
+    }}
+  {%- else -%}
+    {{
+      image
+      | image_url: width: 2200
+      | image_tag:
+        widths: img_widths,
+        sizes: img_sizes,
+        loading: img_loading,
+        class: class,
+        alt: alt | default: image.alt
+    }}
+  {%- endif -%}
+{%- endif -%}

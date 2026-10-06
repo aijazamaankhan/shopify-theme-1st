@@ -1,0 +1,97 @@
+{%- comment -%}
+  Cart line items, shared by the cart page and the drawer.
+  Params: context ('page' | 'drawer')
+  Mutations go through /cart/change.js using the line item key (see cart.js).
+{%- endcomment -%}
+<ul class="cart-lines" role="list" data-cart-lines>
+  {%- for item in cart.items -%}
+    {%- assign line_id = context | append: '-line-' | append: forloop.index -%}
+    <li class="cart-line" data-cart-line data-key="{{ item.key }}" data-index="{{ forloop.index }}">
+      <a href="{{ item.url }}" class="cart-line__media media" style="--ratio: 4 / 5;" tabindex="-1" aria-hidden="true">
+        {%- if item.image -%}
+          {{ item.image | image_url: width: 300 | image_tag: width: 100, height: 125, loading: 'lazy', sizes: '100px', widths: '100,200,300', alt: '' }}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </a>
+      <div class="cart-line__info">
+        <div class="cart-line__head">
+          {%- if item.product.vendor != blank and context == 'page' -%}<p class="caption cart-line__vendor">{{ item.product.vendor | escape }}</p>{%- endif -%}
+          <a href="{{ item.url }}" class="cart-line__title" id="{{ line_id }}-title">{{ item.product.title | escape }}</a>
+          {%- unless item.product.has_only_default_variant -%}
+            <dl class="cart-line__options caption">
+              {%- for option in item.options_with_values -%}
+                <div><dt>{{ option.name | escape }}:</dt> <dd>{{ option.value | escape }}</dd></div>
+              {%- endfor -%}
+            </dl>
+          {%- endunless -%}
+          {%- if item.selling_plan_allocation -%}<p class="caption">{{ item.selling_plan_allocation.selling_plan.name | escape }}</p>{%- endif -%}
+          {%- assign property_size = item.properties | size -%}
+          {%- if property_size > 0 -%}
+            <dl class="cart-line__options caption">
+              {%- for property in item.properties -%}
+                {%- assign first_char = property.first | slice: 0 -%}
+                {%- if property.last != blank and first_char != '_' -%}
+                  <div>
+                    <dt>{{ property.first | escape }}:</dt>
+                    <dd>
+                      {%- if property.last contains '/uploads/' -%}
+                        <a href="{{ property.last }}" target="_blank" rel="noopener">{{ property.last | split: '/' | last }}</a>
+                      {%- else -%}
+                        {{ property.last | escape }}
+                      {%- endif -%}
+                    </dd>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </dl>
+          {%- endif -%}
+          {%- if item.line_level_discount_allocations.size > 0 -%}
+            <ul class="cart-line__discounts caption" role="list">
+              {%- for discount in item.line_level_discount_allocations -%}
+                <li>{% render 'icon', name: 'check' %} {{ discount.discount_application.title | escape }} (&minus;{{ discount.amount | money }})</li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+
+        <div class="cart-line__controls">
+          {%- liquid
+            assign rule = item.variant.quantity_rule
+            assign line_max = rule.max
+            assign qty_title = item.product.title | escape
+            assign qty_label = 'cart.general.quantity_for' | t: title: qty_title
+            assign qty_id = line_id | append: '-qty'
+          -%}
+          {%- render 'quantity-input',
+            id: qty_id,
+            name: 'updates[]',
+            value: item.quantity,
+            min: rule.min,
+            max: line_max,
+            step: rule.increment,
+            line: forloop.index,
+            label: qty_label
+          -%}
+          <a href="{{ item.url_to_remove }}" class="cart-line__remove link caption" data-remove aria-describedby="{{ line_id }}-title">{{ 'cart.general.remove' | t }}</a>
+        </div>
+        <p class="cart-line__error field-message field-message--error" data-line-error hidden>{% render 'icon', name: 'error' %}<span data-line-error-text></span></p>
+      </div>
+
+      <div class="cart-line__price">
+        {%- if item.original_line_price != item.final_line_price -%}
+          <s class="caption">{{ item.original_line_price | money }}</s>
+          <span class="cart-line__total price__item--sale">{{ item.final_line_price | money }}</span>
+        {%- else -%}
+          <span class="cart-line__total">{{ item.original_line_price | money }}</span>
+        {%- endif -%}
+        {%- if item.quantity > 1 -%}
+          <span class="caption">{{ item.final_price | money }} {{ 'cart.general.each' | t }}</span>
+        {%- endif -%}
+        {%- if item.unit_price_measurement -%}
+          <span class="caption">{{ item.unit_price | money }} / {% if item.unit_price_measurement.reference_value != 1 %}{{ item.unit_price_measurement.reference_value }}{% endif %}{{ item.unit_price_measurement.reference_unit }}</span>
+        {%- endif -%}
+      </div>
+    </li>
+  {%- endfor -%}
+</ul>

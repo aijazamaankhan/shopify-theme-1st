@@ -1,0 +1,49 @@
+{%- comment -%} Global search dialog. Opened by [data-open-dialog="SearchModal"]. Works without JS via the header link to the search page. {%- endcomment -%}
+<dialog id="SearchModal" class="search-modal color-scheme-1" aria-label="{{ 'general.search.label' | t }}" data-drawer>
+  <div class="search-modal__inner page-width">
+    <predictive-search class="predictive-search" data-enabled="{{ settings.predictive_search }}" data-url="{{ routes.predictive_search_url }}">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+        <label for="SearchModalInput" class="visually-hidden">{{ 'general.search.label' | t }}</label>
+        <span class="search-form__icon">{% render 'icon', name: 'search' %}</span>
+        <input
+          type="search"
+          id="SearchModalInput"
+          name="q"
+          class="search-form__input"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          aria-controls="PredictiveResults"
+          data-search-input
+        >
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="reset" class="icon-button search-form__clear" data-search-clear hidden>
+          {%- render 'icon', name: 'close' -%}
+          <span class="visually-hidden">{{ 'general.search.clear' | t }}</span>
+        </button>
+        <button type="submit" class="button search-form__submit">{{ 'general.search.submit' | t }}</button>
+        <button type="button" class="icon-button search-form__close" data-close-dialog>
+          {%- render 'icon', name: 'close' -%}
+          <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+        </button>
+      </form>
+
+      <div class="predictive-search__body" id="PredictiveResults" data-results>
+        {%- assign suggestions = linklists['search-suggestions'] -%}
+        {%- if suggestions != blank and suggestions.links.size > 0 -%}
+          <div class="predictive-search__suggestions" data-default-content>
+            <p class="eyebrow">{{ 'general.search.popular' | t }}</p>
+            <ul class="cluster" role="list">
+              {%- for link in suggestions.links -%}
+                <li><a href="{{ link.url }}" class="chip">{{ link.title | escape }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="visually-hidden" role="status" aria-live="polite" data-status></div>
+    </predictive-search>
+  </div>
+</dialog>

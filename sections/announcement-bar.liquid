@@ -1,0 +1,70 @@
+{%- if section.blocks.size > 0 -%}
+  <announcement-bar
+    class="announcement-bar color-{{ section.settings.color_scheme }}"
+    data-autoplay="{{ section.settings.autoplay }}"
+    data-interval="{{ section.settings.interval | times: 1000 }}"
+    role="region"
+    aria-label="{{ 'general.announcement.label' | t }}"
+  >
+    <div class="announcement-bar__inner page-width">
+      {%- if section.blocks.size > 1 -%}
+        <button type="button" class="announcement-bar__nav" data-prev>
+          {%- render 'icon', name: 'chevron-left' -%}
+          <span class="visually-hidden">{{ 'general.slider.previous' | t }}</span>
+        </button>
+      {%- endif -%}
+      <div class="announcement-bar__slides" data-slides>
+        {%- for block in section.blocks -%}
+          <div class="announcement-bar__slide{% if forloop.first %} is-active{% endif %}" data-slide {{ block.shopify_attributes }}{% unless forloop.first %} hidden{% endunless %}>
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}" class="announcement-bar__text">{{ block.settings.text | escape }}</a>
+            {%- else -%}
+              <p class="announcement-bar__text">{{ block.settings.text | escape }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+      {%- if section.blocks.size > 1 -%}
+        <button type="button" class="announcement-bar__nav" data-next>
+          {%- render 'icon', name: 'chevron-right' -%}
+          <span class="visually-hidden">{{ 'general.slider.next' | t }}</span>
+        </button>
+        {%- if section.settings.autoplay -%}
+          <button type="button" class="announcement-bar__nav announcement-bar__toggle" data-toggle aria-pressed="false">
+            <span data-icon-pause>{%- render 'icon', name: 'pause' -%}</span>
+            <span data-icon-play hidden>{%- render 'icon', name: 'play' -%}</span>
+            <span class="visually-hidden">{{ 'general.slider.pause' | t }}</span>
+          </button>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </announcement-bar>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "color_scheme", "id": "color_scheme", "label": "Colour scheme", "default": "scheme-3" },
+    { "type": "checkbox", "id": "autoplay", "label": "Rotate announcements automatically", "info": "Never auto-rotates when the visitor prefers reduced motion.", "default": true },
+    { "type": "range", "id": "interval", "label": "Seconds between announcements", "min": 4, "max": 12, "step": 1, "unit": "s", "default": 6 }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Complimentary shipping on orders over a threshold you set" },
+        { "type": "url", "id": "link", "label": "Link (optional)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "blocks": [ { "type": "announcement" } ]
+    }
+  ]
+}
+{% endschema %}

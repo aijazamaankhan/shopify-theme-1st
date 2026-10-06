@@ -1,0 +1,40 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-1": {
+          "type": "announcement",
+          "settings": { "text": "Complimentary shipping on orders over a threshold you set" }
+        },
+        "announcement-2": {
+          "type": "announcement",
+          "settings": { "text": "New season pieces have just arrived" }
+        }
+      },
+      "block_order": ["announcement-1", "announcement-2"],
+      "settings": { "color_scheme": "scheme-3", "autoplay": true, "interval": 6 }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {},
+      "block_order": [],
+      "settings": {
+        "logo_width": 140,
+        "layout": "center",
+        "menu": "main-menu",
+        "mega_menu_all": true,
+        "show_search": true,
+        "show_account": true,
+        "sticky": true,
+        "transparent": true,
+        "transparent_text": "light",
+        "border": true,
+        "color_scheme": "scheme-1"
+      }
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

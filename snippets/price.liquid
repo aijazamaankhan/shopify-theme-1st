@@ -1,0 +1,54 @@
+{%- comment -%}
+  Price block.
+  Params: product (required), variant (optional — uses that variant's price), class
+  Money is always formatted with Shopify's `money` filter so store currency settings apply.
+{%- endcomment -%}
+{%- liquid
+  if variant
+    assign price = variant.price
+    assign compare_at = variant.compare_at_price
+    assign available = variant.available
+    assign unit_variant = variant
+    assign show_from = false
+  else
+    assign price = product.price
+    assign compare_at = product.compare_at_price
+    assign available = product.available
+    assign unit_variant = product.selected_or_first_available_variant
+    assign show_from = product.price_varies
+  endif
+  assign on_sale = false
+  if compare_at > price
+    assign on_sale = true
+  endif
+  assign price_money = price | money
+-%}
+<div class="price{% if on_sale %} price--on-sale{% endif %}{% if available == false %} price--sold-out{% endif %}{% if class != blank %} {{ class }}{% endif %}" data-price>
+  <dl class="price__list">
+    {%- if on_sale -%}
+      <div class="price__row">
+        <dt class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</dt>
+        <dd class="price__item price__item--sale">
+          {%- if show_from -%}{{ 'products.product.price.from_price_html' | t: price: price_money }}{%- else -%}{{ price_money }}{%- endif -%}
+        </dd>
+        <dt class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</dt>
+        <dd class="price__item price__item--compare"><s>{{ compare_at | money }}</s></dd>
+      </div>
+    {%- else -%}
+      <div class="price__row">
+        <dt class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</dt>
+        <dd class="price__item">
+          {%- if show_from -%}{{ 'products.product.price.from_price_html' | t: price: price_money }}{%- else -%}{{ price_money }}{%- endif -%}
+        </dd>
+      </div>
+    {%- endif -%}
+  </dl>
+  {%- if unit_variant.unit_price_measurement -%}
+    <p class="price__unit caption">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      {{ unit_variant.unit_price | money }}
+      <span aria-hidden="true">/</span><span class="visually-hidden">{{ 'products.product.price.per' | t }}</span>
+      {% if unit_variant.unit_price_measurement.reference_value != 1 %}{{ unit_variant.unit_price_measurement.reference_value }}{% endif %}{{ unit_variant.unit_price_measurement.reference_unit }}
+    </p>
+  {%- endif -%}
+</div>

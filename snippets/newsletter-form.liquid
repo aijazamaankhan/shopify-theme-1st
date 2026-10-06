@@ -1,0 +1,38 @@
+{%- comment -%}
+  Newsletter signup using Shopify's native customer form (creates a customer subscribed to marketing).
+  Params: id (unique string), class
+{%- endcomment -%}
+{%- form 'customer', id: id, class: class, novalidate: 'novalidate' -%}
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  {%- if form.posted_successfully? -%}
+    <p class="form-status form-status--success" role="status" tabindex="-1" data-autofocus>
+      {%- render 'icon', name: 'check' %} {{ 'newsletter.success' | t -}}
+    </p>
+  {%- else -%}
+    {%- if form.errors -%}
+      <div class="form-status form-status--error" role="alert" tabindex="-1" data-autofocus>
+        {{ form.errors | default_errors }}
+      </div>
+    {%- endif -%}
+    <div class="newsletter-form__row">
+      <label class="visually-hidden" for="{{ id }}-email">{{ 'newsletter.label' | t }}</label>
+      <input
+        type="email"
+        id="{{ id }}-email"
+        name="contact[email]"
+        class="field__input"
+        autocomplete="email"
+        autocorrect="off"
+        autocapitalize="off"
+        placeholder="{{ 'newsletter.placeholder' | t }}"
+        value="{{ form.email }}"
+        required
+        {% if form.errors contains 'email' %}aria-invalid="true"{% endif %}
+      >
+      <button type="submit" class="button">
+        {{ 'newsletter.button' | t }}
+        {%- if settings.button_arrow %} {% render 'icon', name: 'arrow-right', class: 'button__arrow' %}{% endif -%}
+      </button>
+    </div>
+  {%- endif -%}
+{%- endform -%}
